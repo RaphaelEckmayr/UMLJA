@@ -30,8 +30,6 @@ class Package:
         self.classes = []
 
 
-
-
 #Methods
 def getAttributeFromGeometry(tag, string):
     return re.findall("(?<=" + tag + "=\")(\d*.\d)", string)
@@ -65,29 +63,38 @@ classNodes = re.findall("\<y\:UMLClassNode[^>]*>.*?\<\/y\:UMLClassNode\>", xmlFi
 for x in classNodes:
     nodeLabel = re.findall("<y\:NodeLabel[^>]*>[^<]+", x)[0]
     className = re.findall("(?<=>)[^']*", nodeLabel)[0];
-    attributeLabel = re.findall("<y\:AttributeLabel[^>]*>[^<]+", x)[0];
-    attributeString = re.findall("(?<=>).*", attributeLabel)[0];
+    attributeLabelArray = re.findall("<y\:AttributeLabel[^>]*>[^<]+", x);
 
-    attributeString = re.sub("\+", "\npublic ", attributeString)
-    attributeString = re.sub("-", "\nprivate ", attributeString)
-    attributeString = re.sub("#", "\nprotected ", attributeString)
+    if(len(attributeLabelArray) == 1):
+        attributeString = re.findall("(?<=>).*", attributeLabel)[0];
 
-    attributes = re.split("\n", attributeString)
+        attributeString = re.sub("\+", "\npublic ", attributeString)
+        attributeString = re.sub("-", "\nprivate ", attributeString)
+        attributeString = re.sub("#", "\nprotected ", attributeString)
 
+        attributes = re.split("\n", attributeString)
 
-    methodLabel = re.findall("<y\:MethodLabel[^>]*>[^<]+", x)[0]; #only if not null [0]
-    methodString = re.findall("(?<=>).*", methodLabel);
+        del attributes[0]
 
-    methodString = re.sub("\+", "\npublic ", methodString)
-    methodString = re.sub("-", "\nprivate ", methodString)
-    methodString = re.sub("#", "\nprotected ", methodString)
-
-    methods = re.split("\n", methodString)
+    else:
+        attributes = []
 
 
+    methodLabelArray = re.findall("<y\:MethodLabel[^>]*>[^<]+", x); #only if not null [0] missing
 
-    del attributes[0]
-    del methods[0]
+    if len(methodLabelArray) == 1:
+        methodLabel = methodLabelArray[0]
+        methodString = re.findall("(?<=>).*", methodLabel)[0];
+        methodString = re.sub("\+", "\npublic ", methodString)
+        methodString = re.sub("-", "\nprivate ", methodString)
+        methodString = re.sub("#", "\nprotected ", methodString)
+
+        methods = re.split("\n", methodString)
+
+        del methods[0]
+    else:
+        methods=[]
+
 
     geometryTag = str(re.findall("\<y\:Geometry[^>]*\/\>", x))
     xCoordinate = float(getAttributeFromGeometry("x", geometryTag)[0])
@@ -103,7 +110,7 @@ for x in classNodes:
 
         if packageX < xCoordinate and xCoordinate < xMax and packageY < yCoordinate and yCoordinate < yMax:
             newClasses = p.classes
-            newClasses.append(JaClass(className,attributes,[]))
+            newClasses.append(JaClass(className,attributes,methods))
             p.classes = newClasses
             break;
 
