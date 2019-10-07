@@ -1,6 +1,7 @@
 import re
+import os
 
-baselocation = "./TestDir"
+baselocation = "C:/Schule/4/AUD/Test/"
 
 #Classes
 class JaClass:
@@ -66,7 +67,7 @@ for x in classNodes:
     attributeLabelArray = re.findall("<y\:AttributeLabel[^>]*>[^<]+", x);
 
     if(len(attributeLabelArray) == 1):
-        attributeString = re.findall("(?<=>).*", attributeLabel)[0];
+        attributeString = re.findall("(?<=>).*", attributeLabelArray[0])[0];
 
         attributeString = re.sub("\+", "\npublic ", attributeString)
         attributeString = re.sub("-", "\nprivate ", attributeString)
@@ -114,6 +115,16 @@ for x in classNodes:
             p.classes = newClasses
             break;
 
+for p in packages:
+    os.mkdir(baselocation + p.packageName);
+    for c in p.classes:
+        f = open(baselocation+p.packageName + "/" + c.className + ".java", "w+")
+        f.write("package " + p.packageName + ";\n")
+        f.write("public class " + c.className + "{\n")
+        for v in c.variables:
+            f.write("\t"+str(v)+";\n")
 
+        f.write("}")
+        f.close()
 print("yeet")
 
