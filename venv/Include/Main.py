@@ -34,7 +34,7 @@ class Package:
 
 class DnDPanel(wx.Panel):
     """"""
-    #Mathods / Get attribute
+    #Methods / Get attribute
     def getAttributeFromGeometry(self, tag, string):
         return re.findall("(?<=" + tag + "=\")(\d*.\d)", string)
 
@@ -43,22 +43,28 @@ class DnDPanel(wx.Panel):
 
     # Parser
     def parse(self, filePath):
-        f = open(str(filePath), 'r')
-        xmlFile = f.read()
-        f.close()
-
-        self.printMessage("File successfully read")
+        try:
+            f = open(str(filePath), 'r')
+        except:
+            self.printMessage("File not found")
+        try:
+            xmlFile = f.read()
+            f.close()
+            self.printMessage("File successfully read")
+        except:
+            self.printMessage("Currupt File")
 
         xmlFile = re.sub("(\n| {2,})", "", xmlFile)
 
         groupNodes = re.findall("\<y\:GenericGroupNode[^>]*>.*?\<\/y\:GenericGroupNode\>", xmlFile)
 
         packages = []
+        use = True
         for x in groupNodes:
             geometryTag = str(re.findall("\<y\:Geometry[^>]*\/\>", x))
             height = self.getAttributeFromGeometry("height", geometryTag)[0]
             width = self.getAttributeFromGeometry("width", geometryTag)[0]
-            if not height == '80.0' and not width == '100.0':
+            if use:
                 xCoordinate = self.getAttributeFromGeometry("x", geometryTag)[0]
                 yCoordinate = self.getAttributeFromGeometry("y", geometryTag)[0]
                 nodeLabel = re.findall("<y\:NodeLabel[^>]*>[^<]+", x)[0]
@@ -66,41 +72,63 @@ class DnDPanel(wx.Panel):
 
                 packages.append(Package(name, height, width, xCoordinate, yCoordinate))
 
+                use = False
+            else:
+                use = True
+
         classNodes = re.findall("\<y\:UMLClassNode[^>]*>.*?\<\/y\:UMLClassNode\>", xmlFile)
 
         for x in classNodes:
-            nodeLabel = re.findall("<y\:NodeLabel[^>]*>[^<]+", x)[0]
-            className = re.findall("(?<=>)[^']*", nodeLabel)[0];
-            attributeLabelArray = re.findall("<y\:AttributeLabel[^>]*>[^<]+", x);
+            try:
+                nodeLabel = re.findall("<y\:NodeLabel[^>]*>[^<]+", x)[0]
+                className = re.findall("(?<=>)[^']*", nodeLabel)[0];
+                attributeLabelArray = re.findall("<y\:AttributeLabel[^>]*>[^<]+", x);
 
-            if (len(attributeLabelArray) == 1):
-                attributeString = re.findall("(?<=>).*", attributeLabelArray[0])[0];
+                if (len(attributeLabelArray) == 1):
+                    attributeString = re.findall("(?<=>).*", attributeLabelArray[0])[0];
 
-                attributeString = re.sub("\+", "\npublic ", attributeString)
-                attributeString = re.sub("-", "\nprivate ", attributeString)
-                attributeString = re.sub("#", "\nprotected ", attributeString)
+                    attributeString = re.sub("\+", "\npublic ", attributeString)
+                    attributeString = re.sub("-", "\nprivate ", attributeString)
+                    attributeString = re.sub("#", "\nprotected ", attributeString)
 
-                attributes = re.split("\n", attributeString)
+                    attributes = re.split("\n", attributeString)
 
-                del attributes[0]
+                    del attributes[0]
 
-            else:
-                attributes = []
+                    for i,a in enumerate(attributes):
+                        a = re.sub(":", "", a)
+                        temp = re.split(" ", a)
+                        a = temp[0]+ " " + temp[2] +" "+ temp[1]
+                        attributes[i] = a
+                else:
+                    attributes = []
+            except:
+                self.printMessage("Error with attribute definition: Layout probably wrong in" + x.className)
 
-            methodLabelArray = re.findall("<y\:MethodLabel[^>]*>[^<]+", x);  # only if not null [0] missing
+            try:
+                methodLabelArray = re.findall("<y\:MethodLabel[^>]*>[^<]+", x);
+                if len(methodLabelArray) == 1:
+                    methodLabel = methodLabelArray[0]
+                    methodString = re.findall("(?<=>).*", methodLabel)[0];
+                    methodString = re.sub("\+", "\npublic ", methodString)
+                    methodString = re.sub("-", "\nprivate ", methodString)
+                    methodString = re.sub("#", "\nprotected ", methodString)
 
-            if len(methodLabelArray) == 1:
-                methodLabel = methodLabelArray[0]
-                methodString = re.findall("(?<=>).*", methodLabel)[0];
-                methodString = re.sub("\+", "\npublic ", methodString)
-                methodString = re.sub("-", "\nprivate ", methodString)
-                methodString = re.sub("#", "\nprotected ", methodString)
+                    methods = re.split("\n", methodString)
 
-                methods = re.split("\n", methodString)
+                    del methods[0]
 
-                del methods[0]
-            else:
-                methods = []
+                    for i, a in enumerate(methods):
+                        a = re.sub(":", "", a)
+                        temp = re.split(" ", a)
+                        a = temp[0] + " " + temp[2] + " " + temp[1]
+                        methods[i] = a
+
+                else:
+                    methods = []
+                    self.printMessage("No Methods in class")
+            except:
+                self.printMessage("Error with attribute definition: Layout probably wrong in" + x.className)
 
             geometryTag = str(re.findall("\<y\:Geometry[^>]*\/\>", x))
             xCoordinate = float(self.getAttributeFromGeometry("x", geometryTag)[0])
@@ -163,15 +191,15 @@ class DnDPanel(wx.Panel):
         file_drop_target = MyFileDropTarget(self.panel)
         self.lbl = wx.StaticText(self.panel, label="Drag some files here:")
         self.fileTextCtrl = wx.TextCtrl(self.panel,
-                                        style=wx.TE_MULTILINE|wx.HSCROLL|wx.TE_READONLY, size=(160, -1))
+                                        style=wx.TE_MULTILINE|wx.HSCROLL|wx.TE_READONLY, size=(180, 70))
         self.fileTextCtrl.SetDropTarget(file_drop_target)
         self.logLabel = wx.StaticText(self.panel, label="Log Console:")
-        self.logTextCtrl = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE|wx.HSCROLL|wx.TE_READONLY, size=(200, -1))
+        self.logTextCtrl = wx.TextCtrl(self.panel, style=wx.TE_MULTILINE|wx.HSCROLL|wx.TE_READONLY, size=(250, 150))
         self.button = wx.Button(self.panel, label="Convert")
         self.lblname = wx.StaticText(self.panel, label="Projektname:")
-        self.editname = wx.TextCtrl(self.panel, size=(140, -1))
+        self.editname = wx.TextCtrl(self.panel, size=(230, -1))
         self.projectPathLabel = wx.StaticText(self.panel, label="Projektpfad:")
-        self.projectPathText = wx.TextCtrl(self.panel, size=(140, -1))
+        self.projectPathText = wx.TextCtrl(self.panel, size=(230, -1))
 
         self.fileTextCtrl.AppendText("Double Click to select File")
 
@@ -196,7 +224,7 @@ class DnDPanel(wx.Panel):
         self.sizer.Add(self.lbl, (3, 0))
         self.sizer.Add(self.fileTextCtrl, (4, 0))
         self.sizer.Add(self.logLabel, (5, 0))
-        self.sizer.Add(self.logTextCtrl, (6, 0))
+        self.sizer.Add(self.logTextCtrl, (6, 0), (6, 2), flag=wx.EXPAND)
 
         # Set simple sizer for a nice border
         self.border = wx.BoxSizer()
@@ -226,12 +254,6 @@ class DnDPanel(wx.Panel):
             # Proceed loading the file chosen by the user
             pathname = fileDialog.GetPath()
             self.path = pathname
-            #try:
-            #    with open(pathname, 'r') as file:
-            #        baselocation = file
-            #        printMessage("File successfully read")
-            #except IOError:
-            #    printMessage(self, "Cannot open file.")
 
     def setPath(self, filePath):
         self.path = filePath
@@ -270,7 +292,7 @@ class DnDFrame(wx.Frame):
     #----------------------------------------------------------------------
     def __init__(self):
         """Constructor"""
-        wx.Frame.__init__(self, parent=None, title="UMLJA", size=wx.Size(400, 300))
+        wx.Frame.__init__(self, parent=None, title="UMLJA", size=wx.Size(440, 400))
         panel = DnDPanel(self)
         self.Show()
 
@@ -281,5 +303,3 @@ if __name__ == "__main__":
     app = wx.App(False)
     frame = DnDFrame()
     app.MainLoop()
-
-
