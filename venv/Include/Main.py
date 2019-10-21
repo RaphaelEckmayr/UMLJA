@@ -36,7 +36,8 @@ class DnDPanel(wx.Panel):
     """"""
     #Methods / Get attribute
     def getAttributeFromGeometry(self, tag, string):
-        return re.findall("(?<=" + tag + "=\")(\d*.\d)", string)
+        result = re.findall("(?<=" + tag + "=\")(-*\d*.\d)", string)
+        return result
 
     def printMessage(self, message):
         self.logTextCtrl.AppendText(message + '\n')
@@ -142,7 +143,7 @@ class DnDPanel(wx.Panel):
                 xMax = packageW + packageX
                 yMax = packageY + packageH
 
-                if packageX < xCoordinate and xCoordinate < xMax and packageY < yCoordinate and yCoordinate < yMax:
+                if packageX <= xCoordinate and xCoordinate <= xMax and packageY <= yCoordinate and yCoordinate <= yMax:
                     newClasses = p.classes
                     newClasses.append(JaClass(className, attributes, methods))
                     p.classes = newClasses
