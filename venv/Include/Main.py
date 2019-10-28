@@ -2,6 +2,7 @@ import re
 import os
 import wx
 import ctypes.wintypes
+import ntpath
 
 #Classes
 class JaClass:
@@ -149,7 +150,7 @@ class DnDPanel(wx.Panel):
                     p.classes = newClasses
                     break
         # Compiler
-        baselocation = self.projectPathText.GetValue() + "/" + self.editname.GetValue() + "/"
+        baselocation = self.projectPathText.GetValue() + "\\" + self.editname.GetValue() + "\\"
         if not os.path.isdir(baselocation):
             os.mkdir(baselocation)
         for p in packages:
@@ -189,7 +190,7 @@ class DnDPanel(wx.Panel):
         """Constructor"""
         wx.Panel.__init__(self, parent=parent)
         self.panel = wx.Panel(self)
-        file_drop_target = MyFileDropTarget(self.panel)
+        file_drop_target = MyFileDropTarget(self)
         self.lbl = wx.StaticText(self.panel, label="Drag some files here:")
         self.fileTextCtrl = wx.TextCtrl(self.panel,
                                         style=wx.TE_MULTILINE|wx.HSCROLL|wx.TE_READONLY, size=(180, 70))
@@ -241,6 +242,9 @@ class DnDPanel(wx.Panel):
         self.path = ''
 
     def convert(self, e):
+        if len(self.editname.GetValue()) < 1:
+            self.printMessage("Error: Field 'Project name' is empty")
+            return
         path = self.path
         self.parse(path)
 
@@ -253,11 +257,11 @@ class DnDPanel(wx.Panel):
                 return  # the user changed their mind
 
             # Proceed loading the file chosen by the user
-            pathname = fileDialog.GetPath()
-            self.path = pathname
+            self.setFilePath(fileDialog.GetPath())
 
-    def setPath(self, filePath):
+    def setFilePath(self, filePath):
         self.path = filePath
+        self.fileTextCtrl.SetValue("Double Click to select File\n\nSelected File: " + ntpath.basename(filePath))
 
 class MyFileDropTarget(wx.FileDropTarget):
     """"""
@@ -282,7 +286,11 @@ class MyFileDropTarget(wx.FileDropTarget):
         print(filenames)
         print("\n%d file(s) dropped at %d,%d:\n" %
                               (len(filenames), x, y))
-        self.window.setPath(filepath[0])
+        filepath = filenames[0]
+        if not ntpath.basename(filepath).endswith(".graphml"):
+            self.window.printMessage("Error: File extension must be: .graphml")
+            return False
+        self.window.setFilePath(filepath)
 
         return True
 
