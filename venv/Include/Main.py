@@ -12,12 +12,15 @@ class JaClass:
     className = ""
     variables = []
     methods = []
+    packagePath = ""
 
-    def __init__(self, nodeId, className, variables, methods):
+
+    def __init__(self, nodeId, className, variables, methods, packagePath):
         self.nodeId = nodeId
         self.className = className
         self.variables = variables
         self.methods = methods
+        self.packagePath = packagePath
 
 
 class Package:
@@ -92,15 +95,7 @@ class DnDPanel(wx.Panel):
                 use = True
 
 
-        connections = []
-        connectionTags = re.findall("<edge[^>]*>", xmlFile)
-
-        for connection in connectionTags:
-            fromNode = re.findall('(?<=source=")[^"]*', connection)[0]
-            toNode = re.findall('(?<=target=")[^"]*', connection)[0]
-            connections.append(Connection(fromNode, toNode))
-
-        nodes = re.findall('<node id="n\d::n\d">.*?<\/node>',xmlFile) #Error in regex doess't select <node> Tag
+        nodes = re.findall('<node id="n\d::n\d">.*?<\/node>',xmlFile)
 
         for x in nodes:
             try:
@@ -228,9 +223,27 @@ class DnDPanel(wx.Panel):
 
                 if packageX <= xCoordinate and xCoordinate <= xMax and packageY <= yCoordinate and yCoordinate <= yMax:
                     newClasses = p.classes
-                    newClasses.append(JaClass(classId, className, attributes, methods))
+                    newClasses.append(JaClass(classId, className, attributes, methods, p.packageName+"."))
                     p.classes = newClasses
                     break
+
+        connections = []
+        connectionTags = re.findall("<edge[^>]*>", xmlFile)
+
+        for connection in connectionTags:
+            fromNodeId = re.findall('(?<=source=")[^"]*', connection)[0]
+            toNodeId = re.findall('(?<=target=")[^"]*', connection)[0]
+
+            for package in packages:
+                for packageClass in package.classes:
+                    if packageClass.nodeId == fromNodeId:
+                        fromNode = packageClass
+                    if packageClass.nodeId == toNodeId:
+                        toNode = packageClass
+
+            connections.append(Connection(fromNode, toNode))
+
+
         # Compiler
         baselocation = self.projectPathText.GetValue() + "\\" + self.editname.GetValue() + "\\"
         if not os.path.isdir(baselocation):
@@ -254,7 +267,9 @@ class DnDPanel(wx.Panel):
                     print("File exists")
 
                 f.write("package " + p.packageName + ";\n")
-
+                for connection in connections: #Turn from and to Node if you want to execute the test file
+                    if c.nodeId == connection.fromNode.nodeId:
+                        f.write("import " + connection.toNode.packagePath + connection.toNode.className + ";\n")
                 f.write("public class " + c.className + "{\n")
 
                 for v in c.variables:
