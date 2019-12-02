@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="d183c3e4-5a87-4d17-8ccb-621c11360e6b" name="Default Changelist" comment="" />
+    <list default="true" id="d183c3e4-5a87-4d17-8ccb-621c11360e6b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/venv/Include/Main.py" beforeDir="false" afterPath="$PROJECT_DIR$/venv/Include/Main.py" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +22,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/venv/Include/Main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4046">
-              <caret line="269" column="106" selection-start-line="269" selection-start-column="106" selection-end-line="269" selection-end-column="106" />
+            <state relative-caret-position="979">
+              <caret line="393" column="32" selection-start-line="393" selection-start-column="32" selection-end-line="393" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -75,7 +78,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -98,6 +100,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -278,11 +281,17 @@
       <workItem from="1573645693070" duration="599000" />
       <workItem from="1574056540268" duration="845000" />
       <workItem from="1574074240220" duration="3259000" />
+      <workItem from="1574078225473" duration="101000" />
+      <workItem from="1574078345806" duration="12000" />
+      <workItem from="1574325414968" duration="295000" />
+      <workItem from="1574330977139" duration="332000" />
+      <workItem from="1574943769464" duration="6000" />
+      <workItem from="1575284137140" duration="460000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="105933000" />
+    <option name="totallyTimeSpent" value="107139000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -295,8 +304,9 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.19402985" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20682302" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -347,18 +357,6 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/venv/Include/Main.py</url>
-          <line>247</line>
-          <option name="timeStamp" value="9" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/venv/Include/Main.py</url>
-          <line>269</line>
-          <option name="timeStamp" value="10" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -431,8 +429,8 @@
     <entry file="file://$PROJECT_DIR$/venv/Include/Main_stable.py" />
     <entry file="file://$PROJECT_DIR$/venv/Include/Main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4046">
-          <caret line="269" column="106" selection-start-line="269" selection-start-column="106" selection-end-line="269" selection-end-column="106" />
+        <state relative-caret-position="979">
+          <caret line="393" column="32" selection-start-line="393" selection-start-column="32" selection-end-line="393" selection-end-column="32" />
         </state>
       </provider>
     </entry>

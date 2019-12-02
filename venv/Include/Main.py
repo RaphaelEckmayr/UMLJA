@@ -49,7 +49,7 @@ class Connection:
 
 
 class DnDPanel(wx.Panel):
-    """"""
+    #Panel where Widgets are stored
 
     # Methods / Get attribute
     def getAttributeFromGeometry(self, tag, string):
@@ -361,7 +361,7 @@ class DnDPanel(wx.Panel):
 
 
 class MyFileDropTarget(wx.FileDropTarget):
-    """"""
+
 
     # ----------------------------------------------------------------------
     def __init__(self, window):
@@ -391,7 +391,7 @@ class MyFileDropTarget(wx.FileDropTarget):
 
 
 class DnDFrame(wx.Frame):
-    """"""
+    #Frame where Panel is stored
 
     # ----------------------------------------------------------------------
     def __init__(self):
