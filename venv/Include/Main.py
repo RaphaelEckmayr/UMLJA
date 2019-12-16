@@ -131,9 +131,12 @@ class DnDPanel(wx.Panel):
                                         isFinal = False
                                         break
                                 if isFinal:
-                                    temp[0] += " final"
+                                    temp[1] += " final"
 
-                                a = temp[0] + " " + temp[1] + " " + temp[3] + " " + temp[2]
+                                a = temp[0] + " " + temp[1] + " " + temp[len(temp)-1] + " " + temp[2]
+
+                                for index in range(2,len(temp) -2):
+                                    a += temp[index];
                             else:
                                 isFinal = True
                                 for c in temp[1]:
@@ -141,9 +144,12 @@ class DnDPanel(wx.Panel):
                                         isFinal = False
                                         break
                                 if isFinal:
-                                    temp[0] += " final"
+                                    temp[2] += " final"
 
-                                a = temp[0] + " " + temp[2] + " " + temp[1]
+                                a = temp[0] + " " + temp[len(temp)-1] + " " + temp[1]
+
+                                for index in range(1,len(temp) -2):
+                                    a += temp[index];
                             attributes[i] = a
                     else:
                         attributes = []
