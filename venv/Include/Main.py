@@ -1,16 +1,14 @@
-
 import re
 import os
 import wx
 import ctypes.wintypes
 import ntpath
 
-
 # Classes
 class JaClass:
     nodeId = ""
     className = ""
-    variables = []
+    variables =[]
     methods = []
     packagePath = ""
 
@@ -21,7 +19,6 @@ class JaClass:
         self.variables = variables
         self.methods = methods
         self.packagePath = packagePath
-
 
 class Package:
     packageName = ""
@@ -127,17 +124,25 @@ class DnDPanel(wx.Panel):
                                 if tempVar == "":
                                     temp.remove(tempVar)
 
-                            isFinal = True
-                            for c in temp[1]:
-                                if c.islower():
-                                    isFinal = False
-                                    break
-                            if isFinal:
-                                temp[0] += " final"
-
                             if temp[1] == "static":
+                                isFinal = True
+                                for c in temp[2]:
+                                    if c.islower():
+                                        isFinal = False
+                                        break
+                                if isFinal:
+                                    temp[0] += " final"
+
                                 a = temp[0] + " " + temp[1] + " " + temp[3] + " " + temp[2]
                             else:
+                                isFinal = True
+                                for c in temp[1]:
+                                    if c.islower():
+                                        isFinal = False
+                                        break
+                                if isFinal:
+                                    temp[0] += " final"
+
                                 a = temp[0] + " " + temp[2] + " " + temp[1]
                             attributes[i] = a
                     else:
@@ -264,7 +269,6 @@ class DnDPanel(wx.Panel):
                 else:
                     f = open(directory, "w+")
                     self.printMessage("File has been overwritten")
-                    print("File exists")
 
                 f.write("package " + p.packageName + ";\n")
                 for connection in connections: #Turn from and to Node if you want to execute the test file
